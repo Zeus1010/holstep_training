@@ -1,20 +1,23 @@
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
+from __future__ import absolute_import, division, print_function
 
 import logging
 import os
-from time import time
-from keras import layers
-from keras.models import Model
-import tensorflow.compat.v1 as tf
 import sys
 import time
+from time import time
+
+import tensorflow.compat.v1 as tf
+from keras import layers
+from keras.models import Model
+
 sys.path.append('../')
 from holstep_training import data_utils
 
 training_batch_size = 64
 training_max_len = 512
+epochs = 5
+steps_per_epoch = 10
+validation_steps = 10
 
 def cnn_2x_lstm(voc_size, max_len, dropout=0.5):
     statement_input = layers.Input(shape=(max_len,), dtype='int32')
@@ -39,12 +42,9 @@ def main(_):
     logging.basicConfig(level=logging.DEBUG)
     if not os.path.exists('/tmp/hol'):
         os.makedirs('/tmp/hol')
-
-
     # Parse the training and validation data.
     parser = data_utils.DataParser('./holstep', use_tokens=False,
                                    verbose=1)
-
     # Print useful stats about the parsed data.
     logging.info('Training data stats:')
     parser.display_stats(parser.train_conjectures)
@@ -73,10 +73,10 @@ def main(_):
                     metrics=['acc'])
 
     print("Training Started:")
-    model.fit( train_generator, epochs=5, 
-                                steps_per_epoch=10, 
+    model.fit( train_generator, epochs=epochs, 
+                                steps_per_epoch=steps_per_epoch, 
                                 validation_data=val_generator,
-                                validation_steps=100 )
+                                validation_steps=validation_steps )
 
     t = time.time()
     export_path = "./{}.h5".format(int(t))
