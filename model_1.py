@@ -90,8 +90,8 @@ def main(_):
     plt.grid()
     plt.show()
 
-    t_accuracy = history.history['acc']
-    v_accuracy = history.history['val_acc']
+    t_accuracy = history.history['accuracy']
+    v_accuracy = history.history['val_accuracy']
     plt.plot(t_accuracy, 'g', label='Training accuracy')
     plt.plot(v_accuracy, 'b', label='Validation accuracy')
     plt.title('Training and Validation accuracy')
