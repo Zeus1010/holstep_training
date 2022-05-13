@@ -4,18 +4,20 @@ import logging
 import os
 import sys
 import time
-from time import time
 
 import tensorflow.compat.v1 as tf
 from keras import layers
 from keras.models import Model
+import matplotlib.pyplot as plt
+import numpy
+
 
 sys.path.append('../')
 from holstep_training import data_utils
 
 training_batch_size = 64
 training_max_len = 512
-epochs = 5
+epochs = 10
 steps_per_epoch = 10
 validation_steps = 10
 
@@ -73,14 +75,37 @@ def main(_):
                     metrics=['acc'])
 
     print("Training Started:")
-    model.fit( train_generator, epochs=epochs, 
+    history = model.fit( train_generator, epochs=epochs, 
                                 steps_per_epoch=steps_per_epoch, 
                                 validation_data=val_generator,
                                 validation_steps=validation_steps )
 
+    loss_train = history.history['loss']
+    loss_val = history.history['val_loss']
+    plt.plot(loss_train, 'g', label='Training loss')
+    plt.plot(loss_val, 'b', label='Validation loss')
+    plt.title('Training and Validation loss')
+    plt.xlabel('Epochs')
+    plt.ylabel('Loss')
+    plt.legend()
+    plt.grid()
+    plt.show()
+
+    t_accuracy = history.history['acc']
+    v_accuracy = history.history['val_acc']
+    plt.plot(t_accuracy, 'g', label='Training accuracy')
+    plt.plot(v_accuracy, 'b', label='Validation accuracy')
+    plt.title('Training and Validation accuracy')
+    plt.xlabel('Epochs')
+    plt.ylabel('Accuracy')
+    plt.legend()
+    plt.grid()
+    plt.show()
+    
     t = time.time()
     export_path = "./{}.h5".format(int(t))
     model.save(export_path)
 
 if __name__ == '__main__':
+    print("-----------------Program started-----------------")
     tf.app.run()
