@@ -70,7 +70,7 @@ def main(_):
     
     model = make_model(voc_size, training_max_len)
     model.summary()
-    model.compile(optimizer=tf.keras.optimizers.RMSprop(learning_rate=0.01),
+    model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=0.01),
                     loss='binary_crossentropy',
                     metrics=['acc'])
 
